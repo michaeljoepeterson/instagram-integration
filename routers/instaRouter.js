@@ -1,24 +1,33 @@
 const express = require('express');
 const {Insta} = require('../models/instaData');
+const {TokenHandler} = require('./tokenHandler');
 const router = express.Router();
 
-router.get('/:token',(req,res) => {
-    let {token} = req.params;
-    
-    return Insta.find({token:token})
+router.get('/',(req,res) => {
+    let {token} = req.query;
+    console.log(token);
+    return Insta.find({'token':token})
 
     .then(instaResults => {
-        //add token
-        if(instaResults.length === 0){
-            
-        }
-        else if(instaResults.length === 1){
+        
+        const tokenHandler = new TokenHandler(instaResults,Insta);
 
+        let newToken = tokenHandler.CheckResults();
+              
+        if(tokenHandler.err){
+            throw(tokenHandler.err);
+        }
+        else if(newToken){
+            return res.json({
+                code:200,
+                token:newToken
+            });
         }
         else{
             const err = {
-                message:'Issue with results'
+                message:'Error with handler'
             };
+
             throw(err);
         }
     })
