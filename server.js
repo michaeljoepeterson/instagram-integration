@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const {PORT, DATABASE_URL,DOMAINS } = require('./config');
+const {instaRouter} = require('./routers/routerExports');
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
@@ -31,6 +32,9 @@ app.use(function (req, res, next) {
   next();
 });
 */
+
+app.use('/api/insta',instaRouter);
+
 function runServer( databaseUrl, port = PORT) {
     
     return new Promise((resolve, reject) => {
