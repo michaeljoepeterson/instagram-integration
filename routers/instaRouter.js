@@ -10,7 +10,7 @@ router.get('/',(req,res) => {
 
     .then(instaResults => {
         
-        const tokenHandler = new TokenHandler(instaResults,Insta);
+        const tokenHandler = new TokenHandler(instaResults,Insta,token);
 
         let newToken = tokenHandler.CheckResults();
               
