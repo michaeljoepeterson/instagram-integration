@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/',(req,res) => {
     let {token} = req.query;
-    return Insta.find({'token':token})
+    return Insta.find({})
 
     .then(instaResults => {
         

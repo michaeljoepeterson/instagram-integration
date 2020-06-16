@@ -88,6 +88,7 @@ class TokenHandler{
             let refresh = this.checkDate(insta.timestamp);
             console.log(refresh);
             if(!refresh){
+                tokenData.token = insta.token;
                 return tokenData;
             }
             else{
