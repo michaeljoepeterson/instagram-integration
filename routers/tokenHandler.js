@@ -1,4 +1,5 @@
 const { INSTA_URL_REFRESH } = require("../config");
+const request = require('request');
 
 class TokenHandler{
     err = null;
@@ -16,7 +17,7 @@ class TokenHandler{
     checkDate(timestamp){
         const today = new Date();
         const diffTime = Math.abs(today - timestamp);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 50; 
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
         console.log(diffDays);
         if(diffDays < this.refreshDays){
             return false;
@@ -27,35 +28,47 @@ class TokenHandler{
     }
 
     async UpdateToken(newTokenData,oldToken){
-        let tokenData = {
-            err:null,
-            token:'test'
-        };
+        console.log('updating token: ',newTokenData,oldToken);
 
         return this.instaModel.findOneAndUpdate({'token':oldToken.token},{
             $set:newTokenData
         },{
-            useFindAndModify:false
+            useFindAndModify:false,
+            new : true 
         });
     }
 
-    async GetToken(oldToken){
+    async GetToken(){
         let tokenData = {
             timestamp:new Date(),
-            token:'123'
+            token:null
         };
         const newUrl = INSTA_URL_REFRESH + this.token;
+
         const options = {
 			url:newUrl
 		};
-        /*
-		request(options,function(error,response,body){
-			//console.log(body);
-			const parsedBody = JSON.parse(body);
-			resolve(parsedBody);
+        let promise = new Promise((resolve,reject) =>{
+            request(options,function(error,response,body){
+                console.log('req err: ',error);
+                const parsedBody = JSON.parse(body);
+                console.log('req body:',parsedBody);
+                tokenData.token = parsedBody.access_token;
+                resolve(tokenData);
+            });
         });
-        */
-        return tokenData;
+
+        return promise;
+		
+    }
+
+    async CreateToken(token){
+        console.log('creating token')
+        const now = new Date();
+        this.instaModel.create({
+            token:this.token,
+            timestamp:now
+        });
     }
 
     //check the results and return the token or set the err if err
@@ -66,13 +79,9 @@ class TokenHandler{
         };
         //add token
         if(this.instaResults.length === 0){
-            const now = new Date();
-            this.instaModel.create({
-                token:this.token,
-                timestamp:now
-            });
+            await this.CreateToken(tokenData.token);
 
-            return tokenData
+            return tokenData;
         }
         else if(this.instaResults.length === 1){
             let insta = this.instaResults[0];
