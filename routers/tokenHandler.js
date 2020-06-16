@@ -1,14 +1,31 @@
+const { time } = require("console");
+
 class TokenHandler{
     err = null;
     token = null;
     instaResults = null;
     instaModel = null;
+    refreshDays = 30;
 
     constructor(instaResults,instaModel,token){
         this.instaResults = instaResults;
         this.instaModel = instaModel;
         this.token = token;
     }
+    //check if should refresh
+    checkDate(timestamp){
+        const today = new Date();
+        const diffTime = Math.abs(today - timestamp);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        console.log(diffDays);
+        if(diffDays < this.refreshDays){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
     //check the results and return the token or set the err if err
     CheckResults = () =>{
 
@@ -20,8 +37,17 @@ class TokenHandler{
                 timestamp:now
             });
         }
-        else if(this.instaResults === 1){
+        else if(this.instaResults.length === 1){
+            let insta = this.instaResults[0];
+            let refresh = this.checkDate(insta.timestamp);
 
+            if(!refresh){
+                return this.token;
+            }
+            else{
+
+            }
+            
         }
         else{
             this.err = {
@@ -29,7 +55,7 @@ class TokenHandler{
             };
             return null;
         }
-        return this.token;
+        
     }
 }
 /*

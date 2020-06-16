@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get('/',(req,res) => {
     let {token} = req.query;
-    console.log(token);
     return Insta.find({'token':token})
 
     .then(instaResults => {
@@ -13,7 +12,7 @@ router.get('/',(req,res) => {
         const tokenHandler = new TokenHandler(instaResults,Insta,token);
 
         let newToken = tokenHandler.CheckResults();
-              
+
         if(tokenHandler.err){
             throw(tokenHandler.err);
         }
