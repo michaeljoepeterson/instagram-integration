@@ -11,10 +11,14 @@ class TokenHandler{
     }
     //check the results and return the token or set the err if err
     CheckResults = () =>{
-        this.token = "123";
+
         //add token
         if(this.instaResults.length === 0){
-
+            const now = new Date();
+            this.instaModel.create({
+                token:this.token,
+                timestamp:now
+            });
         }
         else if(this.instaResults === 1){
 
