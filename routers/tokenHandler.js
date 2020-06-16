@@ -1,4 +1,4 @@
-const { time } = require("console");
+const { INSTA_URL_REFRESH } = require("../config");
 
 class TokenHandler{
     err = null;
@@ -16,7 +16,7 @@ class TokenHandler{
     checkDate(timestamp){
         const today = new Date();
         const diffTime = Math.abs(today - timestamp);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 50; 
         console.log(diffDays);
         if(diffDays < this.refreshDays){
             return false;
@@ -26,8 +26,36 @@ class TokenHandler{
         }
     }
 
-    async GetToken(oldToken){
+    async UpdateToken(newTokenData,oldToken){
+        let tokenData = {
+            err:null,
+            token:'test'
+        };
 
+        return this.instaModel.findOneAndUpdate({'token':oldToken.token},{
+            $set:newTokenData
+        },{
+            useFindAndModify:false
+        });
+    }
+
+    async GetToken(oldToken){
+        let tokenData = {
+            timestamp:new Date(),
+            token:'123'
+        };
+        const newUrl = INSTA_URL_REFRESH + this.token;
+        const options = {
+			url:newUrl
+		};
+        /*
+		request(options,function(error,response,body){
+			//console.log(body);
+			const parsedBody = JSON.parse(body);
+			resolve(parsedBody);
+        });
+        */
+        return tokenData;
     }
 
     //check the results and return the token or set the err if err
@@ -49,12 +77,13 @@ class TokenHandler{
         else if(this.instaResults.length === 1){
             let insta = this.instaResults[0];
             let refresh = this.checkDate(insta.timestamp);
-
+            console.log(refresh);
             if(!refresh){
                 return tokenData;
             }
             else{
-
+                const newTokenData = await this.GetToken();
+                return this.UpdateToken(newTokenData,tokenData);
             }
             
         }
