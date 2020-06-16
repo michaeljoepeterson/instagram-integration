@@ -11,15 +11,20 @@ router.get('/',(req,res) => {
         
         const tokenHandler = new TokenHandler(instaResults,Insta,token);
 
-        let newToken = tokenHandler.CheckResults();
+        return tokenHandler.CheckResults();
 
-        if(tokenHandler.err){
+       
+    })
+
+    .then(tokenData => {
+ 
+        if(tokenData.err){
             throw(tokenHandler.err);
         }
-        else if(newToken){
+        else if(tokenData.token && !tokenData.err){
             return res.json({
                 code:200,
-                token:newToken
+                token:tokenData.token
             });
         }
         else{

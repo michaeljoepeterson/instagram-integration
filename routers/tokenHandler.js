@@ -26,9 +26,16 @@ class TokenHandler{
         }
     }
 
-    //check the results and return the token or set the err if err
-    CheckResults = () =>{
+    async GetToken(oldToken){
 
+    }
+
+    //check the results and return the token or set the err if err
+    async CheckResults () {
+        let tokenData = {
+            err:null,
+            token:this.token
+        };
         //add token
         if(this.instaResults.length === 0){
             const now = new Date();
@@ -36,13 +43,15 @@ class TokenHandler{
                 token:this.token,
                 timestamp:now
             });
+
+            return tokenData
         }
         else if(this.instaResults.length === 1){
             let insta = this.instaResults[0];
             let refresh = this.checkDate(insta.timestamp);
 
             if(!refresh){
-                return this.token;
+                return tokenData;
             }
             else{
 
@@ -53,7 +62,8 @@ class TokenHandler{
             this.err = {
                 message:'Issue with data'
             };
-            return null;
+            tokenData.err = this.err;
+            return tokenData;
         }
         
     }
