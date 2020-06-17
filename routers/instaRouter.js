@@ -17,7 +17,7 @@ router.get('/',(req,res) => {
     })
 
     .then(tokenData => {
-        console.log(tokenData);
+        console.log('final token data: ',tokenData);
         if(tokenData.err){
             throw(tokenHandler.err);
         }

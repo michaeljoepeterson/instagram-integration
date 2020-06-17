@@ -11,13 +11,14 @@ class TokenHandler{
     constructor(instaResults,instaModel,token){
         this.instaResults = instaResults;
         this.instaModel = instaModel;
-        this.token = token;
+        this.token = instaResults[0].token;
     }
     //check if should refresh
     checkDate(timestamp){
         const today = new Date();
         const diffTime = Math.abs(today - timestamp);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        console.log(diffTime / (1000 * 60 * 60 * 24));
         console.log(diffDays);
         if(diffDays < this.refreshDays){
             return false;
