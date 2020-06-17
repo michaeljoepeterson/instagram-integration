@@ -35,6 +35,13 @@ app.use(function (req, res, next) {
 
 app.use('/api/insta',instaRouter);
 
+app.get('/',(req,res) => {
+  res.writeHead(302, {
+    'Location': 'https://whiskco.ca/'
+  });
+  res.end();
+});
+
 function runServer( databaseUrl, port = PORT) {
     
     return new Promise((resolve, reject) => {
