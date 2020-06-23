@@ -1,9 +1,10 @@
 const express = require('express');
 const {Insta} = require('../models/instaData');
 const {TokenHandler} = require('./tokenHandler');
+const {checkAdmin} = require('../tools/checkKey');
 const router = express.Router();
 
-router.get('/',(req,res) => {
+router.get('/',checkAdmin,(req,res) => {
     let {token} = req.query;
     return Insta.find({})
 
